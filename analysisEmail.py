@@ -31,6 +31,6 @@ class JudgeMail:
             rest_P = rest_P * (1.0 - word[1])
          
         trash_p = P / (P + rest_P)
-        print P
-        print rest_P
+        #print P
+        #print rest_P
         return trash_p

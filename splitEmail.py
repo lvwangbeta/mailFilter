@@ -53,7 +53,7 @@ class SplitEmail:
                 ref = ref[char]
                 index += 1
             else:
-                if temp != 0:                              #表示上一个单词已经分离出
+                if temp != 0:                                #表示上一个单词已经分离出
                     res.append(temp)
                     temp = ''
                     count = 0
@@ -68,7 +68,7 @@ class SplitEmail:
                 break
         if count != 0:                                       #最后一个词
             res.append(temp);
-        
+       
 
     def getNTRatio(self, typ):
         '''
@@ -89,15 +89,15 @@ class SplitEmail:
         计算出所有邮件中包含某个词的比例(比如说10封邮件中有5封包含'我们'这个词，
         那么'我们'这个词出现的频率就是50%，这个词来自所有邮件的分词结果)
         '''
-        dic_normal_ratio = self.getNTRatio('normal')
-        dic_trash_ratio = self.getNTRatio('trash')
+        dic_normal_ratio = self.getNTRatio('normal')                        #单词在正常邮件中出现的概率
+        dic_trash_ratio = self.getNTRatio('trash')                          #单词在垃圾邮件中出现的概率
         dic_ratio = dic_normal_ratio
         for key in dic_trash_ratio:
             if key in dic_ratio:
                 dic_ratio[key].append(dic_trash_ratio[key][0])
             else:
-                dic_ratio[key].append(0.01)
-                dic_ratio[key].append(dic_trash_ratio[key][0])
+                dic_ratio[key].append(0.01)                                 #若某单词只出现在正常邮件或垃圾邮件中
+                dic_ratio[key].append(dic_trash_ratio[key][0])              #那么我们假定它在没出现类型中的概率为0.01
         for key in dic_ratio:
             if len(dic_ratio[key]) == 1:
                 dic_ratio[key].append(0.01)
@@ -111,11 +111,11 @@ class SplitEmail:
         '''
         if os.path.exists(fn):
             content = open(fn).read();
-            content = content[content.index("\n\n")+2::]
+            content = content[content.index("\n\n")+2::]                    #去除头信息
             try:
                 string = content.decode('utf-8')
             except:
-                string = content.decode('gb2312','ignore')
+                string = content.decode('gb2312', 'ignore')
             chars = self.regex.findall(string.encode('utf-8'))              #chars为英文单词或单个汉字组成了list
             return chars
 
@@ -136,8 +136,10 @@ class SplitEmail:
         return res
 
 
-    #dir为邮件所在目录
     def split(self, trie, dirs):
+        '''
+        dirs: 邮件史料库目录
+        '''
         for base_d in dirs:
             for dirt in os.listdir(base_d):
                 d = base_d + dirt + "/"
@@ -150,11 +152,12 @@ class SplitEmail:
                     res = list(set(res))
                     self.wordlist[dirt].extend(res)
                     if fn not in self.maildic[dirt]:                           #去重并把每封邮件的分词结果存入字典
-                        self.maildic[dirt][fn] = res
+                        self.maildic[dirt][fn] = res                           #self.maildic[normal|trash][filename]为该邮件的分词结果集
 
     def splitByjieba(self, trie, dirs):
         '''
-        用第三方扩展库结巴中文分词进行分词
+        也可以使用用第三方扩展库结巴中文分词进行分词
+        此处提供了调用接口
         '''
         try:
             import jieba
@@ -179,9 +182,6 @@ def main():
     demo  = SplitEmail()
     words = demo.init_wordslist()
     trie  = demo.words_2_trie(words)
-    #chars = demo.readEmail("./test/18")
-    #res = []
-    #demo.search_in_trie(chars, trie, res)
     demo.split(trie, ['./data/'])
     dic_of_ratio = demo.getRatio()
     for key in dic_of_ratio:

@@ -31,4 +31,5 @@ if __name__ == '__main__':
     #print msg
     conn.close()
     P = analysisEmail.JudgeMail().judge(init, dic_of_ratio, trie, msg)
-    print P
+    print "P(spam) = ", P
+
