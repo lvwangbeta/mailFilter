@@ -28,6 +28,7 @@ Version 1.0
 
 
 使用：
+	解压data.rar到当前文件夹(不要改名)
 	启动第一个终端模拟邮件服务器
 		cd mailFilter
 		python server.py
