@@ -8,7 +8,7 @@ if __name__ == '__main__':
     init = splitEmail.SplitEmail()
     words = init.init_wordslist()
     trie = init.words_2_trie(words)
-    init.splitByjieba(trie, ['./gavindlutsw/'])
+    init.split(trie, ['./data/'])
     dic_of_ratio = init.getRatio()
     #for key in dic_of_ratio:
     #    print key, dic_of_ratio[key]
@@ -19,6 +19,7 @@ if __name__ == '__main__':
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.bind((host, port))
     s.listen(1)
+    print "Waiting for clients..."
     conn, addr = s.accept()
     print 'Connected by', addr
     msg = ""
