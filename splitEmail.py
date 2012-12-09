@@ -14,7 +14,7 @@ class SplitEmail:
     然后逐字检测可否组成字典中存在的单词 或 词组以达到简单的分词效果
     '''
     def __init__(self):
-        self.regex = re.compile(r"(?x) (?: [\w-]+  | [\x80-\xff]{3} )")
+        self.regex = re.compile(r"[\w-]+|[\x80-\xff]{3}")
         self.wordlist = {'normal': [], 'trash': []}
         self.maildic = {'normal': {}, 'trash': {}}
 

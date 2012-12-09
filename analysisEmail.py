@@ -11,7 +11,7 @@ class JudgeMail:
     '''
     def judge(self, init, dic_of_ratio, trie, email):
         res = init.splitsingle(trie, email)                  #res是分词结果，为list
-        for i in [';', '', ' ', ':', '.', '。', '：', '，', ' ']:
+        for i in [';', '', ' ', ':', '.', '。', '：', '，', ' ', '!', '（', '）', '(', ')','！']:
             if i in res:
                 res.remove(i)                                #剔除标点字符
         ratio_of_words = []									 #记录邮件中每个词在垃圾邮件史料库(dic_of_ratio[key][1])中出现的概率	
@@ -23,10 +23,13 @@ class JudgeMail:
                                                              #p(s|w)=0.4	
             ratio_of_words.append((word, 0.4))
         ratio_of_words = sorted(ratio_of_words, key = lambda x:x[1], reverse=True)[:15]
-        P = 1.0
+        P = 1.0 
         rest_P = 1.0
         for word in ratio_of_words:
-            print word[0].decode('utf-8'), word[1]
+            try:
+                print word[0].decode('utf-8'), word[1]
+            except:
+                print word[0], word[1]
             P *= word[1]
             rest_P = rest_P * (1.0 - word[1])
          
