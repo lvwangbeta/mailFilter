@@ -18,18 +18,19 @@ if __name__ == '__main__':
     port = 8888
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.bind((host, port))
-    s.listen(1)
-    print "Waiting for clients..."
-    conn, addr = s.accept()
-    print 'Connected by', addr
-    msg = ""
-    while 1:
-        data = conn.recv(1024)
-        if not len(data):
-            break
-        msg += data
-    #print msg
-    conn.close()
-    P = analysisEmail.JudgeMail().judge(init, dic_of_ratio, trie, msg)
-    print "P(spam) = ", P
+    s.listen(5)
+    while True:
+        print "Waiting for clients..."
+        conn, addr = s.accept()
+        print 'Connected by', addr
+        msg = ""
+        while True:
+            data = conn.recv(1024)
+            if not len(data):
+                break
+            msg += data
+        #print msg
+        conn.close()
+        P = analysisEmail.JudgeMail().judge(init, dic_of_ratio, trie, msg)
+        print "P(spam) = ", P
 
