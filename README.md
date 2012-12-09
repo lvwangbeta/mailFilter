@@ -1,9 +1,6 @@
-﻿#mailFilter
+﻿#mailFilter V1.1
 
-
-### version 1.0
-
-### Principle
+### 原理简介
 
 基于贝叶斯推断的垃圾邮件过滤器。通过8000封正常邮件和8000封垃圾邮件“训练”过滤器:
 解析所有邮件，提取每一个词,然后，计算每个词语在正常邮件和垃圾邮件中的出现频率。
@@ -28,17 +25,23 @@
 
 > 注:如果新收到的邮件中有的词在史料库中还没出现过，就假定p(s|w) = 0.4
 
-### How to use
+### 使用
 
-1. MailServer
+1. 解压data.rar到当前文件夹  
+2. 启动一个终端，模拟邮件服务器
 
 		cd mailFilter
 		python server.py
 
-2. MailClient
+   	
+3. 等到出现 "Waiting for clients..."，启动另一终端，模拟邮件发送端
 
 		cd mailFilter
-		python client.py
+		python client.py emaillocation
+
+### 参考资料
+[http://www.ruanyifeng.com/blog/2011/08/bayesian_inference_part_two.html](http://www.ruanyifeng.com/blog/2011/08/bayesian_inference_part_two.html)  
+[http://en.wikipedia.org/wiki/Bayesian_spam_filtering](http://en.wikipedia.org/wiki/Bayesian_spam_filtering)  
 
 
 
