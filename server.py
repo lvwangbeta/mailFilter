@@ -9,7 +9,7 @@ if __name__ == '__main__':
     words = init.init_wordslist()
     trie = init.words_2_trie(words)
     init.split(trie, ['./data/'])
-    dic_of_ratio = init.getRatio()
+    init.ratio = init.getRatio()
     #for key in dic_of_ratio:
     #    print key, dic_of_ratio[key]
     ####################################################################
@@ -29,8 +29,7 @@ if __name__ == '__main__':
             if not len(data):
                 break
             msg += data
-        #print msg
         conn.close()
-        P = analysisEmail.JudgeMail().judge(init, dic_of_ratio, trie, msg)
+        P = analysisEmail.JudgeMail().judge(init, trie, msg)
         print "P(spam) = ", P
 
