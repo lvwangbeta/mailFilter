@@ -1,4 +1,4 @@
-﻿#mailFilter V1.1
+﻿#mailFilter V1.2
 
 ### 原理简介
 
