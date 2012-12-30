@@ -17,7 +17,10 @@ class SplitEmail:
         self.regex = re.compile(r"[\w-]+|[\x80-\xff]{3}")
         self.wordlist = {'normal': [], 'trash': []}
         self.maildic = {'normal': {}, 'trash': {}}
-
+        self.ratio = {}
+        self.normalnum = 0                                          #正常邮件和垃圾邮件数目
+        self.trashnum = 0                                           #初始为史料库中的统计
+                                                                    #随着接收邮件的判断，其值还会变动
     #读入字典，默认是当前目录的words.txt，也可自己传入位置参数
     def init_wordslist(self, fn=r"./words.txt"):
         f = open(fn)
@@ -72,16 +75,20 @@ class SplitEmail:
 
     def getNTRatio(self, typ):
         '''
-        分别计算正常(Normal)邮件和垃圾(Trash)邮件在其邮件总数的比例
+        分别计算正常(Normal)邮件和垃圾(Trash)邮件中某词在其邮件总数的比例
         typ:['normal', 'trash']
         '''
         counter = collections.Counter(self.wordlist[typ])
         dic = collections.defaultdict(list)
         for word in list(counter):
             dic[word].append(counter[word])
-        len_dic = len(self.maildic[typ]) * 1.0
+        mailcount = len(self.maildic[typ])
+        if typ == 'normal':
+            self.normalnum = mailcount
+        elif typ == 'trash':
+            self.trashnum = mailcount
         for key in dic:
-            dic[key][0] = dic[key][0] / len_dic
+            dic[key][0] = dic[key][0] * 1.0 / mailcount
         return dic
 
     def getRatio(self):
@@ -114,9 +121,12 @@ class SplitEmail:
             content = content[content.index("\n\n")+2::]                    #去除头信息
             try:
                 string = content.decode('utf-8')
+                #string = content.decode('gb2312').encode('utf-8')
             except:
                 string = content.decode('gb2312', 'ignore')
+                #string = content
             chars = self.regex.findall(string.encode('utf-8'))              #chars为英文单词或单个汉字组成了list
+            #chars = self.regex.findall(string) 
             return chars
 
 
@@ -178,17 +188,45 @@ class SplitEmail:
         except:
             self.split(trie, dirs)
 
+    '''
+    服务器每判定一个新邮件都会将结果加到动态数据库中
+    typ = 'nomal' | 'trash'
+    res is [] 新邮件的分词结果
+    '''
+    def flush(self, typ, res):
+        if typ == 'nomal':
+            for word in res:
+                if self.ratio[word][0] == 0.01:
+                    self.ratio[word][0] = 1.0 / (self.normalnum + 1)
+                else:
+                    self.ratio[word][0] = (1 + self.ratio[word][0] * self.normalnum) / (self.normalnum + 1)
+            self.normalnum += 1
+        else:
+            for word in res:
+                if self.ratio[word][1] == 0.01:
+                    self.ratio[word][1] = 1.0 / (self.trashnum + 1)
+                else:
+                    self.ratio[word][1] = (1 + self.ratio[word][1] * self.trashnum) / (self.trashnum + 1)
+                self.trashnum += 1
+
 def main():
     demo  = SplitEmail()
     words = demo.init_wordslist()
     trie  = demo.words_2_trie(words)
     demo.split(trie, ['./data/'])
+    #demo.splitByjieba(trie, ['./data/'])
     dic_of_ratio = demo.getRatio()
+    ratio = open('ratio.txt', 'w')
     for key in dic_of_ratio:
         try:
-            print key.decode('utf-8'), dic_of_ratio[key]
+            #print key, dic_of_ratio[key]
+            #这里真够麻烦的 必须转成gb2312才能在txt里正常显示 XD
+            ratio.write(key.decode('utf-8').encode('gb2312'))
+            for v in dic_of_ratio[key]:
+                 ratio.write(' ' + str(v))
+            ratio.write('\n')
         except:
             pass
-
+    ratio.close()
 if __name__=='__main__':
     main()
