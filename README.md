@@ -38,6 +38,8 @@
 
 		cd mailFilter
 		python client.py emaillocation
+		
+**注意使用Python 2.7版本**		
 
 ### 参考资料
 [http://www.ruanyifeng.com/blog/2011/08/bayesian_inference_part_two.html](http://www.ruanyifeng.com/blog/2011/08/bayesian_inference_part_two.html)  
